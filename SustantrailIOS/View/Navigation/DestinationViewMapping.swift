@@ -27,31 +27,33 @@ import SwiftUI
         }
         .padding()
         .navigationBarTitleDisplayMode(.inline)
-    }
         .presentationDetents([.medium, .large])
         .presentationBackground(.regularMaterial)
+    }
 }
 
 @ViewBuilder func view(for destination: FullScreenDestination) -> some View {
-    switch destination {
-    case let .imageGallery(urls, selectedIndex):
-        TabView(selection: .constant(selectedIndex)) {
-            ForEach(Array(urls.enumerated()), id: \.offset) { index, url in
-                VStack(spacing: 12) {
-                    Text("Image \(index + 1)")
-                        .font(.headline)
-                    Text(url)
-                        .font(.footnote)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal)
+    Group {
+        switch destination {
+        case let .imageGallery(urls, selectedIndex):
+            TabView(selection: .constant(selectedIndex)) {
+                ForEach(Array(urls.enumerated()), id: \.offset) { index, url in
+                    VStack(spacing: 12) {
+                        Text("Image \(index + 1)")
+                            .font(.headline)
+                        Text(url)
+                            .font(.footnote)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal)
+                    }
+                    .tag(index)
                 }
-                .tag(index)
             }
+            .tabViewStyle(.page(indexDisplayMode: .always))
         }
-        .tabViewStyle(.page(indexDisplayMode: .always))
     }
-        .presentationBackground(.black)
+    .presentationBackground(.black)
 }
 
 private struct ExpositionsScreen: View {

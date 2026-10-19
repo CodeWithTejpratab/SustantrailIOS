@@ -44,17 +44,22 @@ final class Router {
         self.identifierTab = identifierTab
         self.parent = nil
         
-        logger.debug("\(self.debugDescription) initialized")
+        logDebug("\(self.debugDescription) initialized")
     }
     
     deinit {
-        logger.debug("\(self.debugDescription) cleared")
+        Logger(subsystem: "com.SustantrailIOS", category: "Navigation")
+            .debug("Router cleared")
     }
     
     private func resetContent() {
         navigationStackPath = []
         presentingSheet = nil
         presentingFullScreen = nil
+    }
+    
+    private func logDebug(_ message: String) {
+        logger.debug("\(message, privacy: .public)")
     }
 }
 
@@ -68,13 +73,13 @@ extension Router {
     }
     
     func setActive() {
-        logger.debug("\(self.debugDescription): \(#function)")
+        logDebug("\(self.debugDescription): \(#function)")
         parent?.resignActive()
         isActive = true
     }
     
     func resignActive() {
-        logger.debug("\(self.debugDescription): \(#function)")
+        logDebug("\(self.debugDescription): \(#function)")
         isActive = false
     }
     
@@ -103,7 +108,7 @@ extension Router {
     }
     
     func select(tab destination: TabDestination) {
-        logger.debug("\(self.debugDescription) \(#function) \(destination.rawValue)")
+        logDebug("\(self.debugDescription) \(#function) \(destination.rawValue)")
         if level == 0 {
             selectedTab = destination
         } else {
@@ -113,24 +118,24 @@ extension Router {
     }
     
     func push(_ destination: PushDestination) {
-        logger.debug("\(self.debugDescription): \(#function) \(destination)")
+        logDebug("\(self.debugDescription): \(#function) \(destination)")
         navigationStackPath.append(destination)
     }
     
     func present(sheet destination: SheetDestination) {
-        logger.debug("\(self.debugDescription): \(#function) \(destination)")
+        logDebug("\(self.debugDescription): \(#function) \(destination)")
         presentingSheet = destination
     }
     
     func present(fullScreen destination: FullScreenDestination) {
-        logger.debug("\(self.debugDescription): \(#function) \(destination)")
+        logDebug("\(self.debugDescription): \(#function) \(destination)")
         presentingFullScreen = destination
     }
     
     func deepLinkOpen(to destination: Destination) {
         guard isActive else { return }
         
-        logger.debug("\(self.debugDescription): \(#function) \(destination)")
+        logDebug("\(self.debugDescription): \(#function) \(destination)")
         navigate(to: destination)
     }
 }
