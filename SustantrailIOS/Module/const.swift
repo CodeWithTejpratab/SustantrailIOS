@@ -22,3 +22,8 @@ struct K {
     
     
 }
+
+struct Config {
+    static let bundleID = "com.SustantrailIOS"
+    static let deepLinkScheme = "Sustantrail"
+}

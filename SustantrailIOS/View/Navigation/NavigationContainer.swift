@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import os
 
 /// ``NavigationStack`` container that works with the ``Router``
 /// to resolve the routes based on the ``Router``'s state

@@ -7,25 +7,6 @@
 
 import Foundation
 
-// MARK: Recreating models so I can understand what the hell is happening
-
-import Tagged
-typealias MovieID = Tagged<MovieDetails, Int>
-typealias ActorID = Tagged<ActorDetails, Int>
-typealias MovieListType = Tagged<MovieList, Int>
-
-struct MovieDetails: Decodable {
-    var id: MovieID
-}
-struct ActorDetails: Decodable {
-    var id: ActorID
-}
-struct MovieList: Decodable {
-    var id: MovieListType
-}
-
-
-
 enum Destination: Hashable {
     case tab(_ destination: TabDestination)
     case push(_ destination: PushDestination)
@@ -45,34 +26,28 @@ extension Destination: CustomStringConvertible {
 }
 
 enum PushDestination: Hashable, CustomStringConvertible {
-    case movieDetails(id: MovieID)
-    case actorDetails(id: ActorID)
-    case movieList(_ movieListType: MovieListType)
+    case expositions(screen: Screen)
     
     var description: String {
         switch self {
-        case let .movieDetails(id): ".movieDetails(\(id))"
-        case let .actorDetails(id): ".actorDetails(\(id))"
-        case let .movieList(type): ".movieList(\(type))"
+        case let .expositions(screen): ".expositions(\(screen.rawValue))"
         }
     }
 }
 
 enum TabDestination: String, Hashable {
     case home
-    case search
-    case releaseCalendar
-    case favorites
+    case events
+    case map
+    case profile
 }
 
 enum SheetDestination: Hashable, CustomStringConvertible {
-    case movieDescription(id: MovieID)
-    case movieDescriptionValue(id: MovieID, title: String, description: String)
+    case expositionInfo(title: String, message: String)
     
     var description: String {
         switch self {
-        case let .movieDescription(id): ".movieDescription(\(id))"
-        case let .movieDescriptionValue(id, _, _): ".movieDescriptionValue(\(id))"
+        case let .expositionInfo(title, _): ".expositionInfo(\(title))"
         }
     }
 }
@@ -80,29 +55,18 @@ enum SheetDestination: Hashable, CustomStringConvertible {
 extension SheetDestination: Identifiable {
     var id: String {
         switch self {
-        case let .movieDescription(id): id.rawValue.formatted()
-        case let .movieDescriptionValue(id, _, _): id.rawValue.formatted()
+        case let .expositionInfo(title, message): "\(title)-\(message)"
         }
     }
 }
 
-enum FullScreenDestination: Hashable {
-    // `movieGallery` and `movieGalleryValue` are the same, but they represent
-    // different data states, for the first one, we need to fetch the data, but
-    // on the second one the data is already available.
-    //
-    // The first one is intended for deep linking
-    // The second one is intended for in-app navigation, as the data is already available
-    // when we will show the movie gallery
-    case movieGallery(id: MovieID)
-    case movieGalleryValue(id: MovieID, images: [ImageContainerViewData], selectedImageIndex: Int)
-}
-
-extension FullScreenDestination: CustomStringConvertible {
+enum FullScreenDestination: Hashable, CustomStringConvertible {
+    case imageGallery(urls: [String], selectedIndex: Int)
+    
     var description: String {
         switch self {
-        case let .movieGallery(id): ".movieGallery(\(id))"
-        case let .movieGalleryValue(id, _, _): ".movieGalleryValue(\(id))"
+        case let .imageGallery(urls, selectedIndex):
+            ".imageGallery(count: \(urls.count), selected: \(selectedIndex))"
         }
     }
 }
@@ -110,8 +74,8 @@ extension FullScreenDestination: CustomStringConvertible {
 extension FullScreenDestination: Identifiable {
     var id: String {
         switch self {
-        case let .movieGallery(id): id.rawValue.formatted()
-        case let .movieGallerValue(id, _, _): id.rawValue.formatted()
+        case let .imageGallery(urls, selectedIndex):
+            "\(urls.joined(separator: ","))::\(selectedIndex)"
         }
     }
 }

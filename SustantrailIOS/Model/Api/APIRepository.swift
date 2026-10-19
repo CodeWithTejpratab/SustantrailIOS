@@ -13,7 +13,7 @@
 import Foundation
 import os.log
 
-enum Screen {
+enum Screen: String, Hashable {
     case home
     case events
 }

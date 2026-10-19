@@ -40,43 +40,12 @@ extension DeepLinkParser {
         }
     }
     
-    static let movieDetails: Self = .init { url in
-        guard
-            url.fullComponents.first == "movies",
-            let movieID = url.fullComponents.last.flatMap(Int.init)
-        else { return nil }
+    static let screen: Self = .init { url in
+        guard url.fullComponents.first == "screen", url.fullComponents.count == 2 else { return nil }
         
-        return .push(.movieDetails(id: .init(movieID)))
-    }
-    
-    static let movieDetailsDescription: Self = .init { url in
-        guard
-            url.fullComponents.first == "movies",
-            url.fullComponents.count == 3,
-            let movieID = Int(url.fullComponents[1]),
-            url.fullComponents.last == "description"
-        else { return nil }
+        let screenValue = url.fullComponents[1]
+        guard let screen = Screen(rawValue: screenValue) else { return nil }
         
-        return .sheet(.movieDescription(id: .init(movieID)))
-    }
-    
-    static let movieDetailsGallery: Self = .init { url in
-        guard
-            url.fullComponents.first == "movies",
-            url.fullComponents.count == 3,
-            let movieID = Int(url.fullComponents[1]),
-            url.fullComponents.last == "gallery"
-        else { return nil }
-        
-        return .fullScreen(.movieGallery(id: .init(movieID)))
-    }
-    
-    static let actorDetails: Self = .init { url in
-        guard
-            url.fullComponents.first == "actors",
-            let actorID = url.fullComponents.last.flatMap(Int.init)
-        else { return nil }
-        
-        return .push(.actorDetails(id: .init(actorID)))
+        return .push(.expositions(screen: screen))
     }
 }
